@@ -21,13 +21,13 @@ package gosapcpdestinationclient
 type DestinationType string
 
 const (
-	// HTTP destination
+	// HTTPDestination type
 	HTTPDestination DestinationType = "HTTP"
-	// RFC destination
+	// RFCDestination type
 	RFCDestination DestinationType = "RFC"
-	// Mail (SMTP) destination
+	// MailDestination type
 	MailDestination DestinationType = "MAIL"
-	// LDAP destination
+	// LDAPDestination type
 	LDAPDestination DestinationType = "LDAP"
 )
 

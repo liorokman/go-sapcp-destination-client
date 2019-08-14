@@ -24,75 +24,47 @@ import (
 	"golang.org/x/oauth2/clientcredentials"
 )
 
+// DestinationClient provides the client object for accessing destinations in the SAP Cloud Platform Cloud Foundry environment.
 type DestinationClient struct {
 	restyClient *resty.Client
 }
 
+// DestinationFinder provides a Find method for discovering destinations on any level.
 type DestinationFinder interface {
-	// Find a destination by name on all levels and return the first match.
-	// Search priority is destination on service instance level. If none is found, fallbacks to subaccount level (accessible by all apps deployed in the same subaccount).
 	Find(name string) (DestinationLookupResult, error)
 }
 
+// SubaccountDestinationManager provides an interface for methods that manage destinations on the Subaccount level
 type SubaccountDestinationManager interface {
-	// Get a list of destinations posted on subaccount level. If none is found, an empty array is returned. Subaccount is determined by the passed OAuth access token.
 	GetSubaccountDestinations() ([]Destination, error)
-
-	// Create a new destination on subaccount level. Subaccount is determined by the passed OAuth access token.
 	CreateSubaccountDestination(newDestination Destination) error
-
-	// Update (overwrite) existing destination with a new destination, posted on subaccount level. Subaccount is determined by the passed OAuth access token
 	UpdateSubaccountDestination(dest Destination) (AffectedRecords, error)
-
-	// Get a destination posted on subaccount level. Subaccount is determined by the passed OAuth access token.
 	GetSubaccountDestination(name string) (Destination, error)
-
-	// Delete a destination posted on subaccount level. Subaccount is determined by the passed OAuth access token.
 	DeleteSubaccountDestination(name string) (AffectedRecords, error)
 }
 
+// SubaccountCertificateManager provides an interface for methods that manage certificates on the Subaccount level
 type SubaccountCertificateManager interface {
-	// Get all certificates posted on subaccount level. In none is found, an empty array is returned. Subaccount is determined by the passed OAuth access token
 	GetSubaccountCertificates() ([]Certificate, error)
-
-	// Create a new certificate on subaccount level. Subaccount is determined by the passed OAuth access token
 	CreateSubaccountCertificate(cert Certificate) error
-
-	// Get a certificate posted on subaccount level. Subaccount is determined by the passed OAuth access token
 	GetSubaccountCertificate(name string) (Certificate, error)
-
-	// Delete a certificate posted on subaccount level. Subaccount is determined by the passed OAuth access token
 	DeleteSubaccountCertificate(name string) (AffectedRecords, error)
 }
 
+// InstanceDestinationManager provides an interface for methods that manage destinations on the Instance level
 type InstanceDestinationManager interface {
-	// Get all destinations on service instance level. If none is found, an empty list is returned. Service instance and subaccount are determined the passed OAuth access token
 	GetInstanceDestinations() ([]Destination, error)
-
-	// Create a new destination on service instance level. Service instance and subaccount are determined by the passed OAuth access token
 	CreateInstanceDestination(newDestination Destination) error
-
-	// Update (overwrite) the existing destination with the passed destination. Service instance and subaccount are determined by the passed OAuth access token
 	UpdateInstanceDestination(dest Destination) (AffectedRecords, error)
-
-	// Get a destination posted on service instance level. Service instance and subaccount are determined by the passed OAuth access token
 	GetInstanceDestination(name string) (Destination, error)
-
-	// Delete a destination posted on service instance level. Service instance and subaccount are determined by the passed OAuth access token
 	DeleteInstanceDestination(name string) (AffectedRecords, error)
 }
 
+// InstanceCertificateManager provides an interface for methods that manage certificates on the Instance level
 type InstanceCertificateManager interface {
-	// Get all certificates posted on service instance level. If none is found, an empty list is returned. Service instance and subaccount are determined by the passed OAuth access token
 	GetInstanceCertificates() ([]Certificate, error)
-
-	// Create a new certificate on service instance level. Service instance and subaccount are determined by the passed OAuth access token
 	CreateInstanceCertificate(cert Certificate) error
-
-	// Get a certificate posted on service instance level. Service instance and subaccount are determined by the passed OAuth access token
 	GetInstanceCertificate(name string) (Certificate, error)
-
-	// Deletes a certificate posted on service instance level. Service instance and subaccount are determined by the passed OAuth access token
 	DeleteInstanceCertificate(name string) (AffectedRecords, error)
 }
 
@@ -108,6 +80,7 @@ type DestinationClientConfiguration struct {
 	ServiceURL string
 }
 
+// NewClient creates a new DestinationClient object configured according to the provided DestinationClientConfiguration object
 func NewClient(clientConf DestinationClientConfiguration) (*DestinationClient, error) {
 	conf := &clientcredentials.Config{
 		ClientID:     clientConf.ClientID,
@@ -129,6 +102,8 @@ func NewClient(clientConf DestinationClientConfiguration) (*DestinationClient, e
 
 /****************************   Find a destination **********************************/
 
+// Find a destination by name on all levels and return the first match.
+// Search priority is destination on service instance level. If none is found, fallbacks to subaccount level (accessible by all apps deployed in the same subaccount).
 func (d *DestinationClient) Find(name string) (DestinationLookupResult, error) {
 
 	var retval DestinationLookupResult
@@ -154,9 +129,10 @@ func (d *DestinationClient) Find(name string) (DestinationLookupResult, error) {
 
 /**************************** Destinations on a subaccount level **********************************/
 
+// GetSubaccountDestinations returns a list of destinations posted on subaccount level. If none is found, an empty array is returned. Subaccount is determined by the passed OAuth access token.
 func (d *DestinationClient) GetSubaccountDestinations() ([]Destination, error) {
 
-	var retval []Destination = make([]Destination, 0)
+	var retval = make([]Destination, 0)
 	var errResponse ErrorMessage
 
 	response, err := d.restyClient.R().
@@ -174,6 +150,7 @@ func (d *DestinationClient) GetSubaccountDestinations() ([]Destination, error) {
 	return retval, nil
 }
 
+// CreateSubaccountDestination creates a new destination on subaccount level. Subaccount is determined by the passed OAuth access token.
 func (d *DestinationClient) CreateSubaccountDestination(newDestination Destination) error {
 
 	var errResponse ErrorMessage
@@ -193,6 +170,7 @@ func (d *DestinationClient) CreateSubaccountDestination(newDestination Destinati
 	return nil
 }
 
+// UpdateSubaccountDestination updates (overwrites) an existing destination with a new destination, posted on subaccount level. Subaccount is determined by the passed OAuth access token
 func (d *DestinationClient) UpdateSubaccountDestination(dest Destination) (AffectedRecords, error) {
 
 	var retval AffectedRecords
@@ -214,6 +192,7 @@ func (d *DestinationClient) UpdateSubaccountDestination(dest Destination) (Affec
 	return retval, nil
 }
 
+// GetSubaccountDestination retrieves a named destination posted on subaccount level. Subaccount is determined by the passed OAuth access token.
 func (d *DestinationClient) GetSubaccountDestination(name string) (Destination, error) {
 
 	var retval Destination
@@ -237,6 +216,7 @@ func (d *DestinationClient) GetSubaccountDestination(name string) (Destination, 
 	return retval, nil
 }
 
+// DeleteSubaccountDestination deletes a destination posted on subaccount level. Subaccount is determined by the passed OAuth access token.
 func (d *DestinationClient) DeleteSubaccountDestination(name string) (AffectedRecords, error) {
 
 	var retval AffectedRecords
@@ -262,9 +242,10 @@ func (d *DestinationClient) DeleteSubaccountDestination(name string) (AffectedRe
 
 /**************************** Subaccount Certificates **********************************/
 
+// GetSubaccountCertificates retrieves all certificates posted on the subaccount level. In none are found, an empty array is returned. The Subaccount is determined based on the passed OAuth access token
 func (d *DestinationClient) GetSubaccountCertificates() ([]Certificate, error) {
 
-	var retval []Certificate = make([]Certificate, 0)
+	var retval = make([]Certificate, 0)
 	var errResponse ErrorMessage
 
 	response, err := d.restyClient.R().
@@ -282,6 +263,7 @@ func (d *DestinationClient) GetSubaccountCertificates() ([]Certificate, error) {
 	return retval, nil
 }
 
+// CreateSubaccountCertificate creates a new certificate on the subaccount level. The Subaccount is determined by the passed OAuth access token
 func (d *DestinationClient) CreateSubaccountCertificate(cert Certificate) error {
 
 	var errResponse ErrorMessage
@@ -301,6 +283,7 @@ func (d *DestinationClient) CreateSubaccountCertificate(cert Certificate) error 
 	return nil
 }
 
+// GetSubaccountCertificate retrieves a named certificate posted on the subaccount level. The Subaccount is determined by the passed OAuth access token
 func (d *DestinationClient) GetSubaccountCertificate(name string) (Certificate, error) {
 
 	var retval Certificate
@@ -324,6 +307,7 @@ func (d *DestinationClient) GetSubaccountCertificate(name string) (Certificate, 
 	return retval, nil
 }
 
+// DeleteSubaccountCertificate deletes a certificate posted on the subaccount level. The Subaccount is determined by the passed OAuth access token
 func (d *DestinationClient) DeleteSubaccountCertificate(name string) (AffectedRecords, error) {
 
 	var retval AffectedRecords
@@ -349,9 +333,10 @@ func (d *DestinationClient) DeleteSubaccountCertificate(name string) (AffectedRe
 
 /**************************** Destinations on an instance level **********************************/
 
+// GetInstanceDestinations retrieves all destinations on the service instance level. If none are found, an empty list is returned. Service instance and subaccount are determined the passed OAuth access token
 func (d *DestinationClient) GetInstanceDestinations() ([]Destination, error) {
 
-	var retval []Destination = make([]Destination, 0)
+	var retval = make([]Destination, 0)
 	var errResponse ErrorMessage
 
 	response, err := d.restyClient.R().
@@ -369,6 +354,7 @@ func (d *DestinationClient) GetInstanceDestinations() ([]Destination, error) {
 	return retval, nil
 }
 
+// CreateInstanceDestination creates a new destination on the service instance level. The service instance and subaccount are determined by the passed OAuth access token
 func (d *DestinationClient) CreateInstanceDestination(newDestination Destination) error {
 
 	var errResponse ErrorMessage
@@ -388,6 +374,7 @@ func (d *DestinationClient) CreateInstanceDestination(newDestination Destination
 	return nil
 }
 
+// UpdateInstanceDestination updates (overwrites) an existing destination with the passed destination. The service instance and subaccount are determined by the passed OAuth access token
 func (d *DestinationClient) UpdateInstanceDestination(dest Destination) (AffectedRecords, error) {
 
 	var retval AffectedRecords
@@ -409,6 +396,7 @@ func (d *DestinationClient) UpdateInstanceDestination(dest Destination) (Affecte
 	return retval, nil
 }
 
+// GetInstanceDestination retrieves a destination posted on the service instance level. The service instance and subaccount are determined by the passed OAuth access token
 func (d *DestinationClient) GetInstanceDestination(name string) (Destination, error) {
 
 	var retval Destination
@@ -432,6 +420,7 @@ func (d *DestinationClient) GetInstanceDestination(name string) (Destination, er
 	return retval, nil
 }
 
+// DeleteInstanceDestination deletes a destination posted on the service instance level. The service instance and subaccount are determined by the passed OAuth access token
 func (d *DestinationClient) DeleteInstanceDestination(name string) (AffectedRecords, error) {
 
 	var retval AffectedRecords
@@ -457,9 +446,10 @@ func (d *DestinationClient) DeleteInstanceDestination(name string) (AffectedReco
 
 /**************************** Instance Certificates **********************************/
 
+// GetInstanceCertificates retrieves all certificates posted on the service instance level. If none are found, an empty list is returned. The service instance and subaccount are determined by the passed OAuth access token
 func (d *DestinationClient) GetInstanceCertificates() ([]Certificate, error) {
 
-	var retval []Certificate = make([]Certificate, 0)
+	var retval = make([]Certificate, 0)
 	var errResponse ErrorMessage
 
 	response, err := d.restyClient.R().
@@ -477,6 +467,7 @@ func (d *DestinationClient) GetInstanceCertificates() ([]Certificate, error) {
 	return retval, nil
 }
 
+// CreateInstanceCertificate creates a new certificate on the service instance level. The service instance and subaccount are determined by the passed OAuth access token
 func (d *DestinationClient) CreateInstanceCertificate(cert Certificate) error {
 
 	var errResponse ErrorMessage
@@ -496,6 +487,7 @@ func (d *DestinationClient) CreateInstanceCertificate(cert Certificate) error {
 	return nil
 }
 
+// GetInstanceCertificate retrieves a certificate posted on the service instance level. The service instance and subaccount are determined by the passed OAuth access token
 func (d *DestinationClient) GetInstanceCertificate(name string) (Certificate, error) {
 
 	var retval Certificate
@@ -519,6 +511,7 @@ func (d *DestinationClient) GetInstanceCertificate(name string) (Certificate, er
 	return retval, nil
 }
 
+// DeleteInstanceCertificate deletes a certificate posted on the service instance level. The service instance and subaccount are determined by the passed OAuth access token
 func (d *DestinationClient) DeleteInstanceCertificate(name string) (AffectedRecords, error) {
 
 	var retval AffectedRecords
@@ -544,16 +537,19 @@ func (d *DestinationClient) DeleteInstanceCertificate(name string) (AffectedReco
 
 /****************************** Misc. ************************************************/
 
+// SetDebug enables or disables debug output for the DestinationClient
 func (d *DestinationClient) SetDebug(debug bool) {
 	d.restyClient.SetDebug(debug)
 }
 
+// MarshalJSON marshalls a Destination object as expected by the Destination RESTful API
 func (d Destination) MarshalJSON() ([]byte, error) {
 	d.Properties["Name"] = d.Name
 	d.Properties["Type"] = string(d.Type)
 	return json.Marshal(d.Properties)
 }
 
+// UnmarshalJSON unmarshalls a Destination object as provided by the Destination RESTful API
 func (d *Destination) UnmarshalJSON(b []byte) error {
 
 	unmarshalled := map[string]string{}
@@ -585,6 +581,7 @@ func (d *Destination) UnmarshalJSON(b []byte) error {
 	return nil
 }
 
+// StatusCode returns the status code provided with the error
 func (e ErrorMessage) StatusCode() int {
 	return e.statusCode
 }
