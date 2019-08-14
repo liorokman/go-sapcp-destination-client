@@ -9,20 +9,8 @@ import (
 	"golang.org/x/oauth2/clientcredentials"
 )
 
-type destinationClient struct {
+type DestinationClient struct {
 	restyClient *resty.Client
-}
-
-type DestinationClient interface {
-	DestinationFinder
-
-	SubaccountDestinationManager
-	SubaccountCertificateManager
-
-	InstanceDestinationManager
-	InstanceCertificateManager
-
-	SetDebug(debug bool)
 }
 
 type DestinationFinder interface {
@@ -105,7 +93,7 @@ type DestinationClientConfiguration struct {
 	ServiceURL string
 }
 
-func NewClient(clientConf DestinationClientConfiguration) (DestinationClient, error) {
+func NewClient(clientConf DestinationClientConfiguration) (*DestinationClient, error) {
 	conf := &clientcredentials.Config{
 		ClientID:     clientConf.ClientID,
 		ClientSecret: clientConf.ClientSecret,
@@ -119,14 +107,14 @@ func NewClient(clientConf DestinationClientConfiguration) (DestinationClient, er
 		SetHeader("Accept", "application/json").
 		SetTimeout(60 * time.Second)
 
-	return &destinationClient{
+	return &DestinationClient{
 		restyClient: restyClient,
 	}, nil
 }
 
 /****************************   Find a destination **********************************/
 
-func (d *destinationClient) Find(name string) (DestinationLookupResult, error) {
+func (d *DestinationClient) Find(name string) (DestinationLookupResult, error) {
 
 	var retval DestinationLookupResult
 	var errResponse ErrorMessage
@@ -151,7 +139,7 @@ func (d *destinationClient) Find(name string) (DestinationLookupResult, error) {
 
 /**************************** Destinatons on a subaccount level **********************************/
 
-func (d *destinationClient) GetSubaccountDestinations() ([]Destination, error) {
+func (d *DestinationClient) GetSubaccountDestinations() ([]Destination, error) {
 
 	var retval []Destination = make([]Destination, 0)
 	var errResponse ErrorMessage
@@ -171,7 +159,7 @@ func (d *destinationClient) GetSubaccountDestinations() ([]Destination, error) {
 	return retval, nil
 }
 
-func (d *destinationClient) CreateSubaccountDestination(newDestination Destination) error {
+func (d *DestinationClient) CreateSubaccountDestination(newDestination Destination) error {
 
 	var errResponse ErrorMessage
 
@@ -190,7 +178,7 @@ func (d *destinationClient) CreateSubaccountDestination(newDestination Destinati
 	return nil
 }
 
-func (d *destinationClient) UpdateSubaccountDestination(dest Destination) (AffectedRecords, error) {
+func (d *DestinationClient) UpdateSubaccountDestination(dest Destination) (AffectedRecords, error) {
 
 	var retval AffectedRecords
 	var errResponse ErrorMessage
@@ -211,7 +199,7 @@ func (d *destinationClient) UpdateSubaccountDestination(dest Destination) (Affec
 	return retval, nil
 }
 
-func (d *destinationClient) GetSubaccountDestination(name string) (Destination, error) {
+func (d *DestinationClient) GetSubaccountDestination(name string) (Destination, error) {
 
 	var retval Destination
 	var errResponse ErrorMessage
@@ -234,7 +222,7 @@ func (d *destinationClient) GetSubaccountDestination(name string) (Destination, 
 	return retval, nil
 }
 
-func (d *destinationClient) DeleteSubaccountDestination(name string) (AffectedRecords, error) {
+func (d *DestinationClient) DeleteSubaccountDestination(name string) (AffectedRecords, error) {
 
 	var retval AffectedRecords
 	var errResponse ErrorMessage
@@ -259,7 +247,7 @@ func (d *destinationClient) DeleteSubaccountDestination(name string) (AffectedRe
 
 /**************************** Subaccount Certificates **********************************/
 
-func (d *destinationClient) GetSubaccountCertificates() ([]Certificate, error) {
+func (d *DestinationClient) GetSubaccountCertificates() ([]Certificate, error) {
 
 	var retval []Certificate = make([]Certificate, 0)
 	var errResponse ErrorMessage
@@ -279,7 +267,7 @@ func (d *destinationClient) GetSubaccountCertificates() ([]Certificate, error) {
 	return retval, nil
 }
 
-func (d *destinationClient) CreateSubaccountCertificate(cert Certificate) error {
+func (d *DestinationClient) CreateSubaccountCertificate(cert Certificate) error {
 
 	var errResponse ErrorMessage
 
@@ -298,7 +286,7 @@ func (d *destinationClient) CreateSubaccountCertificate(cert Certificate) error 
 	return nil
 }
 
-func (d *destinationClient) GetSubaccountCertificate(name string) (Certificate, error) {
+func (d *DestinationClient) GetSubaccountCertificate(name string) (Certificate, error) {
 
 	var retval Certificate
 	var errResponse ErrorMessage
@@ -321,7 +309,7 @@ func (d *destinationClient) GetSubaccountCertificate(name string) (Certificate, 
 	return retval, nil
 }
 
-func (d *destinationClient) DeleteSubaccountCertificate(name string) (AffectedRecords, error) {
+func (d *DestinationClient) DeleteSubaccountCertificate(name string) (AffectedRecords, error) {
 
 	var retval AffectedRecords
 	var errResponse ErrorMessage
@@ -346,7 +334,7 @@ func (d *destinationClient) DeleteSubaccountCertificate(name string) (AffectedRe
 
 /**************************** Destinatons on an instance level **********************************/
 
-func (d *destinationClient) GetInstanceDestinations() ([]Destination, error) {
+func (d *DestinationClient) GetInstanceDestinations() ([]Destination, error) {
 
 	var retval []Destination = make([]Destination, 0)
 	var errResponse ErrorMessage
@@ -366,7 +354,7 @@ func (d *destinationClient) GetInstanceDestinations() ([]Destination, error) {
 	return retval, nil
 }
 
-func (d *destinationClient) CreateInstanceDestination(newDestination Destination) error {
+func (d *DestinationClient) CreateInstanceDestination(newDestination Destination) error {
 
 	var errResponse ErrorMessage
 
@@ -385,7 +373,7 @@ func (d *destinationClient) CreateInstanceDestination(newDestination Destination
 	return nil
 }
 
-func (d *destinationClient) UpdateInstanceDestination(dest Destination) (AffectedRecords, error) {
+func (d *DestinationClient) UpdateInstanceDestination(dest Destination) (AffectedRecords, error) {
 
 	var retval AffectedRecords
 	var errResponse ErrorMessage
@@ -406,7 +394,7 @@ func (d *destinationClient) UpdateInstanceDestination(dest Destination) (Affecte
 	return retval, nil
 }
 
-func (d *destinationClient) GetInstanceDestination(name string) (Destination, error) {
+func (d *DestinationClient) GetInstanceDestination(name string) (Destination, error) {
 
 	var retval Destination
 	var errResponse ErrorMessage
@@ -429,7 +417,7 @@ func (d *destinationClient) GetInstanceDestination(name string) (Destination, er
 	return retval, nil
 }
 
-func (d *destinationClient) DeleteInstanceDestination(name string) (AffectedRecords, error) {
+func (d *DestinationClient) DeleteInstanceDestination(name string) (AffectedRecords, error) {
 
 	var retval AffectedRecords
 	var errResponse ErrorMessage
@@ -454,7 +442,7 @@ func (d *destinationClient) DeleteInstanceDestination(name string) (AffectedReco
 
 /**************************** Instance Certificates **********************************/
 
-func (d *destinationClient) GetInstanceCertificates() ([]Certificate, error) {
+func (d *DestinationClient) GetInstanceCertificates() ([]Certificate, error) {
 
 	var retval []Certificate = make([]Certificate, 0)
 	var errResponse ErrorMessage
@@ -474,7 +462,7 @@ func (d *destinationClient) GetInstanceCertificates() ([]Certificate, error) {
 	return retval, nil
 }
 
-func (d *destinationClient) CreateInstanceCertificate(cert Certificate) error {
+func (d *DestinationClient) CreateInstanceCertificate(cert Certificate) error {
 
 	var errResponse ErrorMessage
 
@@ -493,7 +481,7 @@ func (d *destinationClient) CreateInstanceCertificate(cert Certificate) error {
 	return nil
 }
 
-func (d *destinationClient) GetInstanceCertificate(name string) (Certificate, error) {
+func (d *DestinationClient) GetInstanceCertificate(name string) (Certificate, error) {
 
 	var retval Certificate
 	var errResponse ErrorMessage
@@ -516,7 +504,7 @@ func (d *destinationClient) GetInstanceCertificate(name string) (Certificate, er
 	return retval, nil
 }
 
-func (d *destinationClient) DeleteInstanceCertificate(name string) (AffectedRecords, error) {
+func (d *DestinationClient) DeleteInstanceCertificate(name string) (AffectedRecords, error) {
 
 	var retval AffectedRecords
 	var errResponse ErrorMessage
@@ -541,7 +529,7 @@ func (d *destinationClient) DeleteInstanceCertificate(name string) (AffectedReco
 
 /****************************** Misc. ************************************************/
 
-func (d *destinationClient) SetDebug(debug bool) {
+func (d *DestinationClient) SetDebug(debug bool) {
 	d.restyClient.SetDebug(debug)
 }
 
