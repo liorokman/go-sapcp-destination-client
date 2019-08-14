@@ -93,17 +93,29 @@ type InstanceCertificateManager interface {
 	DeleteInstanceCertificate(name string) (AffectedRecords, error)
 }
 
-func NewClient(clientID, clientSecret string, tokenURL string, serviceURL string) (DestinationClient, error) {
+// DestinationClientConfiguration contains the values required for configuring a new Destination client
+type DestinationClientConfiguration struct {
+	// ClientID for authentication purposes. Use the clientid attribute in the service binding
+	ClientID string
+	// ClientSecret for authentication purposes. Use the clientsecret attribute in the service binding
+	ClientSecret string
+	// TokenURL for authentication purposes. Use the url attribute in the service binding
+	TokenURL string
+	// ServiceURL for accessing the service RESTful endpoint. Use the uri attribute in the service binding
+	ServiceURL string
+}
+
+func NewClient(clientConf DestinationClientConfiguration) (DestinationClient, error) {
 	conf := &clientcredentials.Config{
-		ClientID:     clientID,
-		ClientSecret: clientSecret,
-		TokenURL:     tokenURL + "/oauth/token",
+		ClientID:     clientConf.ClientID,
+		ClientSecret: clientConf.ClientSecret,
+		TokenURL:     clientConf.TokenURL + "/oauth/token",
 		Scopes:       []string{},
 	}
 	client := conf.Client(context.Background())
 
 	restyClient := resty.NewWithClient(client).
-		SetHostURL(serviceURL+"/destination-configuration/v1").
+		SetHostURL(clientConf.ServiceURL+"/destination-configuration/v1").
 		SetHeader("Accept", "application/json").
 		SetTimeout(60 * time.Second)
 
