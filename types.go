@@ -16,6 +16,50 @@ const (
 	LDAPDestination DestinationType = "LDAP"
 )
 
+// Common destination properties
+const (
+	// Property name for destination Description
+	DescriptionProperty = "Description"
+	// Property name for the destination Authentication property
+	AuthenticationProperty = "Authentication"
+
+	// Valid values for the authentication property
+
+	AppToAppSSOAuthentication               = "AppToAppSSO"
+	BasicAuthentication                     = "BasicAuthentication"
+	ClientCertificateAuthentication         = "ClientCertificateAuthentication"
+	NoAuthentication                        = "NoAuthentication"
+	OAuth2ClientCredentialsAuthentication   = "OAuth2ClientCredentials"
+	OAuth2SAMLBearerAssertionAuthentication = "OAuth2SAMLBearerAssertion"
+	OAuth2UserTokenExchangeAuthentication   = "OAuth2UserTokenExchange"
+	SAPAssetionSSOAuthentication            = "SAPAssertionSSO"
+
+	// Property name for the destination ProxyType property
+	ProxyTypeProperty = "ProxyType"
+
+	// Valid values for the ProxyType property
+	InternetProxy  = "Internet"
+	OnPremiseProxy = "OnPremise"
+
+	// Property name for the destination URL property
+	URLProperty = "URL"
+
+	// Property name for the LocationID destination property
+	LocationIDProperty = "LocationID"
+
+	// Property name for the destination User property
+	UserProperty = "User"
+
+	// Property name for the destination Password property
+	PasswordProperty = "Password"
+
+	// Property name for the destination RepositoryUser property
+	RepoUserProperty = "RepositoryUser"
+
+	// Property name for the destination RepositoryPassword property
+	RepoPasswordProperty = "RepositoryPassword"
+)
+
 // ErrorMessage struct contains errors returned by the Destination API
 type ErrorMessage struct {
 	ErrorMessage string `json:"ErrorMessage"`
