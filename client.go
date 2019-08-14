@@ -152,7 +152,7 @@ func (d *DestinationClient) Find(name string) (DestinationLookupResult, error) {
 	return retval, nil
 }
 
-/**************************** Destinatons on a subaccount level **********************************/
+/**************************** Destinations on a subaccount level **********************************/
 
 func (d *DestinationClient) GetSubaccountDestinations() ([]Destination, error) {
 
@@ -347,7 +347,7 @@ func (d *DestinationClient) DeleteSubaccountCertificate(name string) (AffectedRe
 	return retval, nil
 }
 
-/**************************** Destinatons on an instance level **********************************/
+/**************************** Destinations on an instance level **********************************/
 
 func (d *DestinationClient) GetInstanceDestinations() ([]Destination, error) {
 

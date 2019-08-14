@@ -28,7 +28,7 @@ func main() {
 
 	vcap := os.Getenv("VCAP_SERVICES")
 	if vcap == "" {
-		fmt.Sprintf("No VCAP_SERVICES")
+		fmt.Printf("No VCAP_SERVICES")
 		os.Exit(1)
 	}
 	destinationClient, err := destinations.NewClient(destinations.DestinationClientConfiguration{
