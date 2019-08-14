@@ -63,6 +63,7 @@ const (
 // ErrorMessage struct contains errors returned by the Destination API
 type ErrorMessage struct {
 	ErrorMessage string `json:"ErrorMessage"`
+	statusCode   int    `json:"-"`
 }
 
 // Destination describes a single Destination

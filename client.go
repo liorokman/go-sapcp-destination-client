@@ -143,6 +143,7 @@ func (d *destinationClient) Find(name string) (DestinationLookupResult, error) {
 		return retval, err
 	}
 	if response.StatusCode() != 200 {
+		errResponse.statusCode = response.StatusCode()
 		return retval, errResponse
 	}
 	return retval, nil
@@ -164,6 +165,7 @@ func (d *destinationClient) GetSubaccountDestinations() ([]Destination, error) {
 		return retval, err
 	}
 	if response.StatusCode() != 200 {
+		errResponse.statusCode = response.StatusCode()
 		return retval, errResponse
 	}
 	return retval, nil
@@ -182,6 +184,7 @@ func (d *destinationClient) CreateSubaccountDestination(newDestination Destinati
 		return err
 	}
 	if response.StatusCode() != 201 {
+		errResponse.statusCode = response.StatusCode()
 		return errResponse
 	}
 	return nil
@@ -202,6 +205,7 @@ func (d *destinationClient) UpdateSubaccountDestination(dest Destination) (Affec
 		return retval, err
 	}
 	if response.StatusCode() != 200 {
+		errResponse.statusCode = response.StatusCode()
 		return retval, errResponse
 	}
 	return retval, nil
@@ -224,6 +228,7 @@ func (d *destinationClient) GetSubaccountDestination(name string) (Destination, 
 		return retval, err
 	}
 	if response.StatusCode() != 200 {
+		errResponse.statusCode = response.StatusCode()
 		return retval, errResponse
 	}
 	return retval, nil
@@ -246,6 +251,7 @@ func (d *destinationClient) DeleteSubaccountDestination(name string) (AffectedRe
 		return retval, err
 	}
 	if response.StatusCode() != 200 {
+		errResponse.statusCode = response.StatusCode()
 		return retval, errResponse
 	}
 	return retval, nil
@@ -267,6 +273,7 @@ func (d *destinationClient) GetSubaccountCertificates() ([]Certificate, error) {
 		return retval, err
 	}
 	if response.StatusCode() != 200 {
+		errResponse.statusCode = response.StatusCode()
 		return retval, errResponse
 	}
 	return retval, nil
@@ -285,6 +292,7 @@ func (d *destinationClient) CreateSubaccountCertificate(cert Certificate) error 
 		return err
 	}
 	if response.StatusCode() != 201 {
+		errResponse.statusCode = response.StatusCode()
 		return errResponse
 	}
 	return nil
@@ -307,6 +315,7 @@ func (d *destinationClient) GetSubaccountCertificate(name string) (Certificate, 
 		return retval, err
 	}
 	if response.StatusCode() != 200 {
+		errResponse.statusCode = response.StatusCode()
 		return retval, errResponse
 	}
 	return retval, nil
@@ -329,6 +338,7 @@ func (d *destinationClient) DeleteSubaccountCertificate(name string) (AffectedRe
 		return retval, err
 	}
 	if response.StatusCode() != 200 {
+		errResponse.statusCode = response.StatusCode()
 		return retval, errResponse
 	}
 	return retval, nil
@@ -350,6 +360,7 @@ func (d *destinationClient) GetInstanceDestinations() ([]Destination, error) {
 		return retval, err
 	}
 	if response.StatusCode() != 200 {
+		errResponse.statusCode = response.StatusCode()
 		return retval, errResponse
 	}
 	return retval, nil
@@ -368,6 +379,7 @@ func (d *destinationClient) CreateInstanceDestination(newDestination Destination
 		return err
 	}
 	if response.StatusCode() != 201 {
+		errResponse.statusCode = response.StatusCode()
 		return errResponse
 	}
 	return nil
@@ -388,6 +400,7 @@ func (d *destinationClient) UpdateInstanceDestination(dest Destination) (Affecte
 		return retval, err
 	}
 	if response.StatusCode() != 200 {
+		errResponse.statusCode = response.StatusCode()
 		return retval, errResponse
 	}
 	return retval, nil
@@ -410,6 +423,7 @@ func (d *destinationClient) GetInstanceDestination(name string) (Destination, er
 		return retval, err
 	}
 	if response.StatusCode() != 200 {
+		errResponse.statusCode = response.StatusCode()
 		return retval, errResponse
 	}
 	return retval, nil
@@ -432,6 +446,7 @@ func (d *destinationClient) DeleteInstanceDestination(name string) (AffectedReco
 		return retval, err
 	}
 	if response.StatusCode() != 200 {
+		errResponse.statusCode = response.StatusCode()
 		return retval, errResponse
 	}
 	return retval, nil
@@ -453,6 +468,7 @@ func (d *destinationClient) GetInstanceCertificates() ([]Certificate, error) {
 		return retval, err
 	}
 	if response.StatusCode() != 200 {
+		errResponse.statusCode = response.StatusCode()
 		return retval, errResponse
 	}
 	return retval, nil
@@ -471,6 +487,7 @@ func (d *destinationClient) CreateInstanceCertificate(cert Certificate) error {
 		return err
 	}
 	if response.StatusCode() != 201 {
+		errResponse.statusCode = response.StatusCode()
 		return errResponse
 	}
 	return nil
@@ -493,6 +510,7 @@ func (d *destinationClient) GetInstanceCertificate(name string) (Certificate, er
 		return retval, err
 	}
 	if response.StatusCode() != 200 {
+		errResponse.statusCode = response.StatusCode()
 		return retval, errResponse
 	}
 	return retval, nil
@@ -515,6 +533,7 @@ func (d *destinationClient) DeleteInstanceCertificate(name string) (AffectedReco
 		return retval, err
 	}
 	if response.StatusCode() != 200 {
+		errResponse.statusCode = response.StatusCode()
 		return retval, errResponse
 	}
 	return retval, nil
@@ -561,6 +580,10 @@ func (d *Destination) UnmarshalJSON(b []byte) error {
 		}
 	}
 	return nil
+}
+
+func (e ErrorMessage) StatusCode() int {
+	return e.statusCode
 }
 
 func (e ErrorMessage) Error() string {
