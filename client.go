@@ -545,6 +545,9 @@ func (d *DestinationClient) SetDebug(debug bool) {
 
 // MarshalJSON marshalls a Destination object as expected by the Destination RESTful API
 func (d Destination) MarshalJSON() ([]byte, error) {
+	if d.Properties == nil {
+		d.Properties = make(map[string]string)
+	}
 	d.Properties["Name"] = d.Name
 	d.Properties["Type"] = string(d.Type)
 	return json.Marshal(d.Properties)
