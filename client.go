@@ -105,18 +105,23 @@ func NewClient(clientConf DestinationClientConfiguration) (*DestinationClient, e
 
 // Find a destination by name on all levels and return the first match.
 // Search priority is destination on service instance level. If none is found, fallbacks to subaccount level (accessible by all apps deployed in the same subaccount).
-func (d *DestinationClient) Find(name string) (DestinationLookupResult, error) {
+// If userToken is not empty, it is passed as the value of the `X-user-token` header. This enables token-exchange flows via the Find operation. If a token-exchange
+// is not required, pass an empty string as the userToken value.
+func (d *DestinationClient) Find(name string, userToken string) (DestinationLookupResult, error) {
 
 	var retval DestinationLookupResult
 	var errResponse ErrorMessage
 
-	response, err := d.restyClient.R().
+	request := d.restyClient.R().
 		SetResult(&retval).
 		SetError(&errResponse).
 		SetPathParams(map[string]string{
 			"name": name,
-		}).
-		Get("/destinations/{name}")
+		})
+	if userToken != "" {
+		request.SetHeader("X-user-token", userToken)
+	}
+	response, err := request.Get("/destinations/{name}")
 
 	if err != nil {
 		return retval, err
